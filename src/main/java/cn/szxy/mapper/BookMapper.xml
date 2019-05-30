@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.szxy.mapper.BookMapper">
+
+    <resultMap id="bookReusltMapper" type="cn.szxy.pojo.Books">
+        <id column="book_id" property="bookId"></id>
+        <result column="name" property="name"></result>
+        <result column="price" property="price"></result>
+    </resultMap>
+
+
+    <insert id="insertBook" parameterType="cn.szxy.pojo.Books">
+          insert into tbl_book values(#{bookId},#{name},#{price})
+    </insert>
+
+    <select id="findOneBook" parameterType="long" resultMap="bookReusltMapper">
+          select book_id,name,price from tbl_book where book_id = #{bookId};
+    </select>
+
+    <select id="findAllBooks"  resultMap="bookReusltMapper">
+          select book_id,name,price from tbl_book;
+    </select>
+
+    <!--
+    <select id="findAllBooks2"  resultMap="bookReusltMapper">
+          select book_id,name,price from tbl_book;
+    </select>
+    -->
+
+    <select id="selectMaxBookId"  resultType="long">
+        select max(book_id) from tbl_book
+    </select>
+
+    <delete id="delBookById" parameterType="long">
+        delete from tbl_book where book_id = #{bookId}
+    </delete>
+
+   <!--
+    org.springframework.jdbc.BadSqlGrammarException:
+    ### Error updating database.  Cause: com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: Unknown column 'book_name' in 'field list'
+    ### The error may involve cn.szxy.mapper.BookMapper.updateBookById-Inline
+    ### The error occurred while setting parameters
+    ### SQL: update tbl_book set price=11.0,book_name=K1va where book_id=?
+    ### Cause: com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: Unknown column 'book_name' in 'field list'
+    ; bad SQL grammar []; nested exception is com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: Unknown column 'book_name' in 'field list'
+     报错原因：没有正确使用参数传值，采用${name},而不是#{name},导致传进去的 name 值被mysql 当成列 column，出现 SQL 语法错误
+     <update id="updateBookById" parameterType="cn.szxy.pojo.Books">
+        update tbl_book set price=${price},book_name=${name} where book_id=#{bookId}
+    </update>
+    -->
+    <update id="updateBookById" parameterType="cn.szxy.pojo.Books">
+        update tbl_book set price=#{price},name=#{name} where book_id=#{bookId}
+    </update>
+
+</mapper>

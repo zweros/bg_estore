@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.szxy.mapper.UsersMapper">
+
+    <!--
+           org.apache.ibatis.binding.BindingException: Invalid bound statement (not found):
+           cn.szxy.mapper.UsersMapper.selUserByName
+
+           原因：mybatis找不到该配置文件，因为 接口名与映射文件配置名不同
+    -->
+
+    <select id="selUserByName" parameterType="string" resultType="cn.szxy.pojo.Users">
+         select userid,username,password from tbl_user where username = #{username}
+    </select>
+</mapper>

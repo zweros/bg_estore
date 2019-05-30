@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.szxy.mapper.BookImageMapper">
+    <resultMap id="bookImageMapper" type="cn.szxy.pojo.BookImage">
+        <id column="image_id" property="imageId"></id>
+        <result column="newName" property="newName"></result>
+        <result column="orginName" property="orginName"></result>
+        <result column="imageType" property="imageType"></result>
+        <!--
+                org.mybatis.spring.MyBatisSystemException:
+                nested exception is org.apache.ibatis.reflection.ReflectionException:
+                Error instantiating null with invalid types () or values ().
+                Cause: java.lang.NullPointerException
+
+                原因是 关联查询中没有写 javaType 类型
+        -->
+        <association column="book_id" property="book"  javaType="cn.szxy.pojo.Books">
+            <id column="book_id" property="bookId"></id>
+            <result column="name" property="name"></result>
+            <result column="price" property="price"></result>
+        </association>
+        
+    </resultMap>
+
+    <insert id="insertBookImage" parameterType="cn.szxy.pojo.BookImage">
+        insert into tbl_image values(default,#{newName},#{orginName},#{imageType},#{book.bookId})
+    </insert>
+
+    <select id="selectOneBookImg" parameterType="long" resultMap="bookImageMapper">
+        select image_id,newName,orginName,imageType,img.book_id,name,price
+        from tbl_image img
+        join tbl_book book on book.book_id = img.book_id
+        where img.book_id = #{bookId}
+    </select>
+
+
+    <select id="selectAllBookImg" resultMap="bookImageMapper">
+         select image_id,newName,orginName,imageType,img.book_id,name,price
+         from tbl_image img
+         join tbl_book book on book.book_id = img.book_id
+    </select>
+</mapper>
